@@ -61,11 +61,10 @@ function stage0()
                     this.gamecounter++;
                 },
                 function () {
-                    this.value = "Feed me",
+                    this.value = "I hunger",
                     this.gamecounter++;
                 },
                 function ({changeState}) {
-                    this.value = "Please?",
                     changeState(stage1, (msg) => {this.value = msg;});
                 },
 
@@ -78,11 +77,38 @@ function stage1(messageWriterFn)
 {
     template([
         {
-            value: "Hi Again",
+            value: "Another Button",
             actions: [
                 function () {
                     messageWriterFn("We are all connected");
+                    this.gamecounter++;
                 },
+                function () {
+                    messageWriterFn("I am still hungry");
+                    this.gamecounter++;
+                },
+                function () {
+                    this.value = "Feed";
+                    messageWriterFn("Will you feed me now?");
+                    this.gamecounter++;
+                },
+                function ({changeState}) {
+                    this.value = "Here, eat these: (((())))";
+                    messageWriterFn("Thank.");
+                    changeState(stage2);
+                },
+            ],
+        },
+    ]);
+}
+
+function stage2()
+{
+    template([
+        {
+            value: "Hi Again",
+            actions: [
+
             ],
         },
     ]);
