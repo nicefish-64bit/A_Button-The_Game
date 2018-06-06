@@ -24,45 +24,68 @@ function disableButtons(buttons)
     }
 }
 
-function stage0()
+function template(buttons)
 {
-    var b = document.createElement('input');
-    b.type = 'button';
-    b.value = "A Button";
-    b.derpstate = 1;
-    b.onclick = function () {
-        switch (this.derpstate) {
-        case 0:
-            this.value = "Am clicked";
-            this.derpstate++;
-            break;
-        case 1:
-            this.value = "Feed me";
-            this.derpstate++;
-            break;
-        case 2:
-            this.value = "Please?";
-            this.derpstate++;
+    var buttonNodes = [];
 
-            disableButtons([b]); stage1((msg) => {this.value = msg;});
-            break;
-        default:
-        }
+    const actions = {
+        changeState: (newState, ...rest) => {
+            disableButtons(buttonNodes);
+            newState.apply(this, rest);
+        },
     };
+
+    for (button of buttons) {
+        var b = document.createElement('input');
+        b.type = 'button';
+        b.value = button.value;
+        b.gamecounter = 0;
+        buttonNodes.push(b);
+        b.onclick = function () {
+            var myAction = button.actions[this.gamecounter];
+            myAction.call(this, actions);
+        };
+    }
 
     insertDivWithChildren([b]);
 }
 
+function stage0()
+{
+    template([
+        {
+            value: "A Button",
+            actions: [
+                function () {
+                    this.value = "Am clicked",
+                    this.gamecounter++;
+                },
+                function () {
+                    this.value = "Feed me",
+                    this.gamecounter++;
+                },
+                function ({changeState}) {
+                    this.value = "Please?",
+                    changeState(stage1, (msg) => {this.value = msg;});
+                },
+
+            ],
+        },
+    ]);
+}
+
 function stage1(messageWriterFn)
 {
-    var b = document.createElement('input');
-    b.type = 'button';
-    b.value = "Hi Again";
-    b.onclick = function () {
-        messageWriterFn("We are all connected");
-    };
-
-    insertDivWithChildren([b]);
+    template([
+        {
+            value: "Hi Again",
+            actions: [
+                function () {
+                    messageWriterFn("We are all connected");
+                },
+            ],
+        },
+    ]);
 }
 
 currentFn = stage0;
