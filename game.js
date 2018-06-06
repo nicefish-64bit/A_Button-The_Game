@@ -5,6 +5,7 @@ function insertDivWithChildren(children)
     var game = document.getElementById('game');
 
     var div = document.createElement('div');
+    div.className += 'gameSection';
     for (child of children) {
         div.appendChild(child);
     }
@@ -13,6 +14,13 @@ function insertDivWithChildren(children)
         game.insertBefore(div, game.firstChild);
     } else {
         game.appendChild(div);
+    }
+}
+
+function disableButtons(buttons)
+{
+    for (button of buttons) {
+        button.disabled = true;
     }
 }
 
@@ -35,7 +43,8 @@ function stage0()
         case 2:
             this.value = "Please?";
             this.derpstate++;
-            stage1((msg) => {this.value = msg;});
+
+            disableButtons([b]); stage1((msg) => {this.value = msg;});
             break;
         default:
         }
